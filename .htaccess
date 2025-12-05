@@ -1,0 +1,225 @@
+# JD Realty & Investment - SEO and Performance Optimizations
+# Last updated: November 26, 2025
+
+# ===============================================
+# Enable GZIP Compression (Critical for Google PageSpeed)
+# ===============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/ttf font/otf font/woff font/woff2
+    
+    # Don't compress images (already compressed)
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp)$ no-gzip dont-vary
+    
+    # Handle old browsers
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+
+# ===============================================
+# Browser Caching (Improves Google PageSpeed Score)
+# ===============================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 2 days"
+    
+    # Cache Static Assets - Images
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType image/ico "access plus 1 year"
+    
+    # Cache Static Assets - CSS/JS
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    
+    # Cache Static Assets - Fonts
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # Don't cache HTML/PHP pages (for fresh content)
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType application/xhtml+xml "access plus 0 seconds"
+</IfModule>
+
+# ===============================================
+# Cache-Control Headers
+# ===============================================
+<IfModule mod_headers.c>
+    # Images - Long cache
+    <FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|ico)$">
+        Header set Cache-Control "max-age=31536000, public, immutable"
+    </FilesMatch>
+    
+    # CSS/JS - Medium cache with revalidation
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "max-age=2592000, public, must-revalidate"
+    </FilesMatch>
+    
+    # Fonts - Long cache
+    <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
+        Header set Cache-Control "max-age=31536000, public, immutable"
+    </FilesMatch>
+    
+    # PHP/HTML - No cache (fresh content)
+    <FilesMatch "\.(php|html)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+    
+    # XML Sitemap - Short cache
+    <FilesMatch "sitemap\.xml$">
+        Header set Cache-Control "max-age=3600, public"
+    </FilesMatch>
+</IfModule>
+
+# ===============================================
+# Remove ETags (Improves caching efficiency)
+# ===============================================
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# ===============================================
+# Security Headers (Google favors secure sites)
+# ===============================================
+<IfModule mod_headers.c>
+    # HSTS - Force HTTPS (helps with security reputation)
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    
+    # Prevent clickjacking
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Enable XSS protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Control referrer information
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Permissions Policy (replaces Feature-Policy)
+    Header set Permissions-Policy "geolocation=(self), microphone=(), camera=()"
+    
+    # Content Security Policy (basic)
+    # Header set Content-Security-Policy "default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"
+</IfModule>
+
+# ===============================================
+# SEO - HTTPS Redirect (Already handled in WWW Redirect section)
+# ===============================================
+
+# ===============================================
+# WWW Redirect (Choose canonical version)
+# ===============================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # For ROOT domain deployment (jdrealtyinvestment.com)
+    RewriteBase /
+    
+    # For SUBFOLDER deployment (localhost/jd-realty/), use this instead:
+    # RewriteBase /jd-realty/
+    
+    # Redirect www to non-www
+    RewriteCond %{HTTP_HOST} ^www\.jdrealtyinvestment\.com$ [NC]
+    RewriteRule ^(.*)$ https://jdrealtyinvestment.com/$1 [R=301,L]
+    
+    # Force HTTPS (Production)
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} jdrealtyinvestment\.com$ [NC]
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# ===============================================
+# Trailing Slash Consistency (SEO best practice)
+# ===============================================
+<IfModule mod_rewrite.c>
+    # Remove trailing slash from non-directory URLs
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [R=301,L]
+</IfModule>
+
+# ===============================================
+# Prevent Directory Listing
+# ===============================================
+Options -Indexes
+
+# ===============================================
+# Block Access to Sensitive Files
+# ===============================================
+<FilesMatch "\.(env|sql|ini|config|htaccess|htpasswd|log|bak|backup|old|orig|tmp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Block access to hidden files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect database.sql specifically
+<Files "database.sql">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# ===============================================
+# Serve WebP images when supported (Modern image format)
+# ===============================================
+<IfModule mod_rewrite.c>
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME} (.*)\.(jpe?g|png)$
+    RewriteCond %1.webp -f
+    RewriteRule ^(.+)\.(jpe?g|png)$ $1.webp [T=image/webp,L]
+</IfModule>
+
+# ===============================================
+# Set correct MIME types
+# ===============================================
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+    AddType image/svg+xml .svg .svgz
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+    AddType application/font-woff .woff
+    AddType application/font-woff2 .woff2
+</IfModule>
+
+# ===============================================
+# Enable Keep-Alive (Improves performance)
+# ===============================================
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+
+# ===============================================
+# Custom Error Pages (Better UX = Better SEO)
+# ===============================================
+# For ROOT domain deployment:
+ErrorDocument 404 /index.php
+ErrorDocument 500 /index.php
+
+# For SUBFOLDER deployment, use these instead:
+# ErrorDocument 404 /jd-realty/index.php
+# ErrorDocument 500 /jd-realty/index.php
