@@ -329,6 +329,7 @@ VALUES ('2BHK Apartment', 'Beautiful apartment', 'residential', '2bhk', 'Thane',
 **JD Realty & Investment**
 - Email: admin@jdrealty.com
 - Founded by: Jeetender Parasni & Dinesh Mittal
+- Developed by: T.Rama Krishna
 - Location: Thane, Maharashtra
 
 ---
