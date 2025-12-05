@@ -37,12 +37,13 @@ if (IS_PRODUCTION) {
 // =============================================
 // DATABASE CONFIGURATION
 // =============================================
+// Load database credentials from environment variables
 if (IS_PRODUCTION) {
-    // Production Database (WebHostBox Hosting)
-    define('DB_HOST', 'localhost');
-    define('DB_USER', 'a1764443_jd_realty');
-    define('DB_PASS', 'Dinesh@12345');
-    define('DB_NAME', 'a1764443_jd_realty');
+    // Production Database - Load from environment variables
+    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+    define('DB_USER', getenv('DB_USER'));
+    define('DB_PASS', getenv('DB_PASS'));
+    define('DB_NAME', getenv('DB_NAME'));
 } else {
     // Local Development Database (XAMPP)
     define('DB_HOST', 'localhost');
@@ -91,4 +92,3 @@ function setCacheHeaders($days = 7) {
     header("Cache-Control: public, max-age=$seconds");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $seconds) . " GMT");
 }
-?>
