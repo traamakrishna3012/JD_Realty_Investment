@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_inquiry'])) {
     <link rel="stylesheet" href="css/style.css?v=20251203c">
     
     <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAybBsnJ4hUUBVtOg1kfZ6FPBd9FahRGgo&libraries=places"></script>
+    <script src="Google maps link with api"></script>
     
     <!-- Structured Data - Real Estate Listing -->
     <script type="application/ld+json">
